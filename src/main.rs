@@ -14,14 +14,27 @@ fn main() {
         input.clear();
         println!("Enter your guess:");
         io::stdin().read_line(&mut input).unwrap();
-        // TODO: handle error when input is not expected format
         let hint = input.trim().to_lowercase().starts_with("hint");
         let guess: u8;
+
         if hint {
-            guess = input.trim().to_lowercase().replace("hint", "").trim().parse::<u8>().unwrap();
+            guess = match input.to_lowercase().replace("hint", "").trim().parse() {
+                Ok(n) => n,
+                Err(_) => {
+                    println!("Please enter a valid number between 1 and 100 and try again, or prefix your guess with \"hint\" for a hint.");
+                    continue;
+                }
+            }
         } else {
-            guess = input.trim().parse::<u8>().unwrap();
+            guess = match input.trim().parse() {
+                Ok(n) => n,
+                Err(_) => {
+                    println!("Please enter a valid number between 1 and 100 and try again, or prefix your guess with \"hint\" for a hint.");
+                    continue;
+                }
+            };
         }
+
         if guess == secret {
             println!("Correct, you win!");
             break;
