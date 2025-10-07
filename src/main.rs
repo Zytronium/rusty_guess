@@ -21,18 +21,23 @@ fn main() {
         Type \"hint <guess>\" to see if your next guess is too high or low."
     );
 
+    let mut guesses: u16 = 0;
+
     loop {
         input.clear();
         print!("Enter your guess: ");
         io::stdout().flush().expect("failed to flush stdout");
 
         io::stdin().read_line(&mut input).unwrap();
+
+        guesses += 1;
         
         let trimmed = input.trim();
 
         let mut parts = trimmed.split_whitespace();
         let first = parts.next().unwrap();
         let give_hint = first.eq_ignore_ascii_case("hint");
+
         let guess: u8;
 
         if give_hint {
@@ -54,7 +59,7 @@ fn main() {
         }
 
         if guess == secret {
-            println!("Correct, you win!");
+            win(guesses);
             break;
         } else if give_hint {
             match guess.cmp(&secret) {
@@ -62,7 +67,7 @@ fn main() {
                 Ordering::Greater => println!("Too big, try again!"),
                 Ordering::Equal => {
                     // Should not happen since we already detect this above
-                    println!("Correct, you win!");
+                    win(guesses);
                     break;
                 }
             }
@@ -70,4 +75,9 @@ fn main() {
             println!("Incorrect. Try again!");
         }
     }
+}
+
+fn win(guesses: u16) {
+    println!("Correct, you win!");
+    println!("It took you {} guess{}", guesses, if guesses > 1 { "es." } else { "!" });
 }
